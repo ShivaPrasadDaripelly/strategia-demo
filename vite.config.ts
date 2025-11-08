@@ -5,6 +5,7 @@ import { createServer } from "./server";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
+  base: mode === "production" ? "/strategia-demo/" : "/", // 👈 crucial for GitHub Pages
   server: {
     host: "::",
     port: 8080,
@@ -14,9 +15,10 @@ export default defineConfig(({ mode }) => ({
     },
   },
   build: {
-    outDir: "dist/spa",
+    outDir: "dist", // 👈 align with deploy command (`gh-pages -d dist`)
+    emptyOutDir: true,
   },
-  plugins: [react(), expressPlugin()],
+  plugins: [react(), expressPlugin(mode)],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./client"),
@@ -25,15 +27,16 @@ export default defineConfig(({ mode }) => ({
   },
 }));
 
-function expressPlugin(): Plugin {
+function expressPlugin(mode: string): Plugin {
   return {
     name: "express-plugin",
-    apply: "serve", // Only apply during development (serve mode)
+    apply: "serve", // Only apply during development
     configureServer(server) {
-      const app = createServer();
-
-      // Add Express app as middleware to Vite dev server
-      server.middlewares.use(app);
+      if (mode === "development") {
+        const app = createServer();
+        // Mount Express as middleware only in dev mode
+        server.middlewares.use(app);
+      }
     },
   };
 }
