@@ -259,7 +259,7 @@ export default function Setup() {
   return (
     <Layout>
       <div className="flex items-center justify-between mb-4">
-        <div className="text-slate-500 text-sm">Dashboard &gt; <span className="text-slate-700 font-medium">Project Setup</span></div>
+        <div className="text-slate-500 text-sm">Dashboard &gt; <span className="text-slate-700 font-medium">Project Estimates</span></div>
         <Button variant="outline" className="rounded-full">Download</Button>
       </div>
 
