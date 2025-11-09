@@ -371,7 +371,9 @@ export default function Setup() {
               <Button asChild variant="outline" className="rounded-full">
                 <Link to="/strategia-demo">Go Back</Link>
               </Button>
-              <Button className="rounded-full">Save</Button>
+              <Button className="rounded-full">
+              <Link to="/strategia-demo">Save</Link>
+                </Button>
             </div>
           </div>
         </TabsContent>
