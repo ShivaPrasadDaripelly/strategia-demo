@@ -12,7 +12,7 @@ import {
 } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Link, useLocation, useNavigate } from "react-router-dom";
-import { useMemo, useState, Fragment } from "react";
+import { useMemo, useState, useEffect, Fragment } from "react";
 import { Plus, Trash2 } from "lucide-react";
 
 function useQuery() {
@@ -30,12 +30,80 @@ const resources = [
   "DevOps Engineer",
 ];
 
+// Demo datasets for dynamic population across tabs
+const detailsDatasets = [
+  [
+    { phase: "Planning & Setup", rows: [
+      { name: "Project Kickoff", start: 1, end: 1, color: "bg-indigo-200" },
+      { name: "Requirement analysis and documentation", start: 1, end: 3, color: "bg-orange-200" },
+      { name: "Planning & Setup", start: 2, end: 3, color: "bg-sky-200" },
+    ]},
+    { phase: "UI/UX Design Strategy", rows: [
+      { name: "Create and finalize Figma designs", start: 3, end: 4, color: "bg-violet-200" },
+      { name: "Design approval from stakeholders", start: 3, end: 6, color: "bg-green-200" },
+    ]},
+    { phase: "Development & Integration", rows: [
+      { name: "Landing Page & 3-4 Sub pages with mobile responsiveness", start: 4, end: 7, color: "bg-rose-200" },
+      { name: "Multilingual Functionality (EN, FR, SP)", start: 5, end: 8, color: "bg-sky-200" },
+    ]},
+  ],
+  [
+    { phase: "Discovery", rows: [
+      { name: "Stakeholder Interviews", start: 1, end: 2, color: "bg-amber-200" },
+      { name: "Competitive Analysis", start: 2, end: 3, color: "bg-indigo-200" },
+    ]},
+    { phase: "Design", rows: [
+      { name: "Wireframes", start: 3, end: 3, color: "bg-sky-200" },
+      { name: "Hi‑fi Mockups", start: 4, end: 5, color: "bg-purple-200" },
+    ]},
+    { phase: "Engineering", rows: [
+      { name: "API Development", start: 3, end: 6, color: "bg-green-200" },
+      { name: "Frontend Implementation", start: 4, end: 7, color: "bg-rose-200" },
+    ]},
+  ],
+  [
+    { phase: "Phase 1", rows: [
+      { name: "Scoping", start: 1, end: 1, color: "bg-slate-300" },
+      { name: "PoC", start: 2, end: 2, color: "bg-sky-200" },
+    ]},
+    { phase: "Phase 2", rows: [
+      { name: "MVP", start: 3, end: 5, color: "bg-teal-200" },
+    ]},
+    { phase: "Phase 3", rows: [
+      { name: "Hardening", start: 6, end: 8, color: "bg-orange-200" },
+    ]},
+  ],
+] as const;
+
+const effortsDatasets = [
+  resources,
+  ["Product Owner","Business Analyst","UX Researcher","Frontend Developer","Backend Developer","QA Engineer"],
+  ["Tech Lead","UI Designer","Full‑stack Dev","Mobile Dev"],
+] as const;
+
+const costsDatasets = [
+  resources.map((name, i) => ({ name, qty: 1, unitPrice: [4820,3170,2450,2250,2360,2750,3240][i] ?? 2200, months: 1.25 + (i % 4) * 0.5 })),
+  [
+    { name: "Product Owner", qty: 1, unitPrice: 5200, months: 1.0 },
+    { name: "Business Analyst", qty: 1, unitPrice: 3800, months: 1.5 },
+    { name: "UX Researcher", qty: 1, unitPrice: 3000, months: 1.25 },
+    { name: "Frontend Developer", qty: 2, unitPrice: 2600, months: 3.0 },
+    { name: "Backend Developer", qty: 1, unitPrice: 2500, months: 2.5 },
+  ],
+  [
+    { name: "Tech Lead", qty: 1, unitPrice: 6000, months: 2.0 },
+    { name: "Full‑stack Dev", qty: 2, unitPrice: 3200, months: 4.0 },
+    { name: "QA Engineer", qty: 1, unitPrice: 2400, months: 2.5 },
+  ],
+] as const;
+
 export default function Setup() {
   const q = useQuery();
   const navigate = useNavigate();
   const [projectName, setProjectName] = useState("");
   const [currency, setCurrency] = useState("INR");
   const [effortRows, setEffortRows] = useState<string[]>(resources);
+  const [costRows, setCostRows] = useState<{ name: string; qty: number; unitPrice: number; months: number }[]>(costsDatasets[0] as any);
 
   const addEffortRow = (idx: number) => {
     setEffortRows((prev) => {
@@ -55,8 +123,11 @@ export default function Setup() {
   };
 
   const isStep1 = q.get("new") === "1";
+  const seedParam = q.get("seed");
+  const seed = Number.isFinite(Number(seedParam)) ? Number(seedParam) % 3 : 0;
 
   const weeks = Array.from({ length: 8 }).map((_, i) => `Week ${i + 1}`);
+  const [tab, setTab] = useState<"details" | "efforts" | "cost">("details");
 
   type Row = { name: string; start: number; end: number; color: string };
   type Group = { phase: string; rows: Row[] };
@@ -114,6 +185,16 @@ export default function Setup() {
     });
   };
 
+  // Apply datasets when navigating with a seed param
+  useEffect(() => {
+    const d = seed;
+    const e = (seed + 1) % 3;
+    const c = (seed + 2) % 3;
+    setPlanGroups(detailsDatasets[d] as any);
+    setEffortRows(effortsDatasets[e] as any);
+    setCostRows(costsDatasets[c] as any);
+  }, [seed]);
+
   if (isStep1) {
     return (
       <Layout>
@@ -140,12 +221,11 @@ export default function Setup() {
                   className="min-h-40 md:min-h-48 w-full h-full"
                 />
                 <div className="mt-4">
-                  <Button asChild variant="outline" className="rounded-full px-8">
+                  <Button asChild variant="outline" className="rounded-full px-5">
                     <Link to="/strategia-demo">Go Back</Link>
                   </Button>
                 </div>
               </div>
-              
               <div>
                 <div className="h-full rounded-xl border-2 border-dashed border-slate-300 grid place-items-center bg-slate-50/60">
                   <div className="text-center">
@@ -161,7 +241,10 @@ export default function Setup() {
 
             <div className="flex justify-end">
               <Button
-                onClick={() => navigate("/setup")}
+                onClick={() => {
+                  const s = Math.floor(Math.random() * 3);
+                  navigate(`/setup?seed=${s}`);
+                }}
                 className="rounded-full h-11 px-6 bg-gradient-to-r from-sky-500 to-indigo-600 text-white hover:from-sky-600 hover:to-indigo-600"
               >
                 Generate Plan
@@ -180,7 +263,7 @@ export default function Setup() {
         <Button variant="outline" className="rounded-full">Download</Button>
       </div>
 
-      <Tabs defaultValue="details" className="">
+      <Tabs value={tab} onValueChange={(v) => setTab(v as any)} className="">
         <TabsList className="bg-slate-100">
           <TabsTrigger value="details">Project Details</TabsTrigger>
           <TabsTrigger value="efforts">Time & Efforts</TabsTrigger>
@@ -235,6 +318,7 @@ export default function Setup() {
                             >
                               <Plus className="h-4 w-4" />
                             </button>
+                            
                             <button
                               onClick={() => removeRow(gi, idx)}
                               className="inline-flex items-center justify-center size-8 rounded-full text-rose-600 hover:bg-rose-50"
@@ -256,7 +340,7 @@ export default function Setup() {
               <Button asChild variant="outline" className="rounded-full">
                 <Link to="/strategia-demo">Go Back</Link>
               </Button>
-              <Button className="rounded-full">Next</Button>
+              <Button className="rounded-full" onClick={() => setTab("efforts")}>Next</Button>
             </div>
           </div>
         </TabsContent>
@@ -293,7 +377,7 @@ export default function Setup() {
                       <button onClick={() => removeEffortRow(idx)} className="inline-flex items-center justify-center size-8 rounded-full text-rose-600 hover:bg-rose-50" aria-label="Delete resource row">
                         <Trash2 className="h-4 w-4" />
                       </button>
-                    </div>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -311,7 +395,7 @@ export default function Setup() {
               <Button asChild variant="outline" className="rounded-full">
                 <Link to="/strategia-demo">Go Back</Link>
               </Button>
-              <Button className="rounded-full">Next</Button>
+              <Button className="rounded-full" onClick={() => setTab("cost")}>Next</Button>
             </div>
           </div>
         </TabsContent>
@@ -347,13 +431,13 @@ export default function Setup() {
                   </TableRow>
                 </TableHeader>
                 <TableBody>
-                  {resources.map((r, idx) => (
-                    <TableRow key={idx}>
-                      <TableCell className="font-medium">{r}</TableCell>
-                      <TableCell className="text-center">01</TableCell>
-                      <TableCell className="text-center">{[4820,3170,2450,2250,2360,2750,3240][idx] ?? 2000}</TableCell>
-                      <TableCell className="text-center">{(1.25 + (idx % 4) * 0.5).toFixed(2)}</TableCell>
-                      <TableCell className="text-center">{(8000 + idx * 1200).toLocaleString()}</TableCell>
+                  {costRows.map((r, idx) => (
+                    <TableRow key={`${r.name}-${idx}`}>
+                      <TableCell className="font-medium">{r.name}</TableCell>
+                      <TableCell className="text-center">{String(r.qty).padStart(2, '0')}</TableCell>
+                      <TableCell className="text-center">{r.unitPrice}</TableCell>
+                      <TableCell className="text-center">{r.months.toFixed(2)}</TableCell>
+                      <TableCell className="text-center">{(r.qty * r.unitPrice * r.months).toLocaleString()}</TableCell>
                     </TableRow>
                   ))}
                   <TableRow className="bg-slate-50">
@@ -361,7 +445,7 @@ export default function Setup() {
                     <TableCell></TableCell>
                     <TableCell></TableCell>
                     <TableCell></TableCell>
-                    <TableCell className="text-center font-semibold">1,23,652</TableCell>
+                    <TableCell className="text-center font-semibold">{costRows.reduce((sum, r) => sum + r.qty * r.unitPrice * r.months, 0).toLocaleString()}</TableCell>
                   </TableRow>
                 </TableBody>
               </Table>
