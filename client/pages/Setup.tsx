@@ -216,10 +216,25 @@ export default function Setup() {
 
             <div className="grid md:grid-cols-2 gap-8 mt-8">
               <div>
-                <Textarea
+                {/* <Textarea
                   placeholder="Describe your project requirements in detail. Example: User authentication system • Dashboard with analytics • Payment integration • Mobile responsive design • Admin panel for content management"
                   className="min-h-40 md:min-h-48 w-full h-full"
-                />
+                /> */}
+                <Textarea
+  placeholder={`Describe your application. For example:
+• Secure login and user roles
+• Dashboard showing key metrics
+• Online payment feature
+• Works smoothly on mobile and tablet
+• Admin area to manage data`}
+  className="w-full h-full min-h-40 md:min-h-48 font-mono p-4 leading-relaxed whitespace-pre-line text-gray-800 border border-gray-300 rounded-2xl shadow-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+  style={{
+    whiteSpace: 'pre-wrap',
+    textAlign: 'left',
+  }}
+/>
+
+
                 <div className="mt-4">
                   <Button asChild variant="outline" className="rounded-full px-5">
                     <Link to="/strategia-demo">Go Back</Link>
