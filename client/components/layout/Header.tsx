@@ -27,7 +27,7 @@ export default function Header() {
   return (
     <header className="sticky top-0 z-40 bg-white/90 backdrop-blur supports-[backdrop-filter]:bg-white/70 shadow-sm border-b">
       <div className="mx-auto max-w-screen-2xl px-6 py-3 flex items-center justify-between">
-        <Link to="/" className="flex items-center gap-3">
+        <Link to="/strategia-demo" className="flex items-center gap-3">
           <div className="h-8 w-8 rounded grid place-items-center bg-gradient-to-br from-sky-400 to-indigo-500 text-white font-bold shadow">
             <span>P</span>
           </div>

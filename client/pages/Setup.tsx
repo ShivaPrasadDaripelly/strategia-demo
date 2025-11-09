@@ -141,7 +141,7 @@ export default function Setup() {
                 />
                 <div className="mt-4">
                   <Button asChild variant="outline" className="rounded-full px-8">
-                    <Link to="/">Go Back</Link>
+                    <Link to="/strategia-demo">Go Back</Link>
                   </Button>
                 </div>
               </div>
@@ -254,7 +254,7 @@ export default function Setup() {
 
             <div className="mt-6 flex justify-between">
               <Button asChild variant="outline" className="rounded-full">
-                <Link to="/">Go Back</Link>
+                <Link to="/strategia-demo">Go Back</Link>
               </Button>
               <Button className="rounded-full">Next</Button>
             </div>
@@ -309,7 +309,7 @@ export default function Setup() {
             </Table>
             <div className="mt-6 flex justify-between">
               <Button asChild variant="outline" className="rounded-full">
-                <Link to="/">Go Back</Link>
+                <Link to="/strategia-demo">Go Back</Link>
               </Button>
               <Button className="rounded-full">Next</Button>
             </div>
@@ -369,7 +369,7 @@ export default function Setup() {
 
             <div className="mt-6 flex justify-between">
               <Button asChild variant="outline" className="rounded-full">
-                <Link to="/">Go Back</Link>
+                <Link to="/strategia-demo">Go Back</Link>
               </Button>
               <Button className="rounded-full">Save</Button>
             </div>
